@@ -56,7 +56,7 @@ def get_profiled_requests(session, endpoint_id, offset, per_page):
     return result
 
 
-def get_grouped_profiled_requests(session, endpoint_id):
+def get_grouped_profiled_requests(session, endpoint_id, version=None):
     """
     Gets the grouped stack lines of all requests of an endpoint.
     :param session: session for the database
@@ -64,9 +64,12 @@ def get_grouped_profiled_requests(session, endpoint_id):
     :return: A list with tuples. Each tuple consists first of a Request-object, and the second part
     of the tuple is a list of StackLine-objects.
     """
+
+    print("Version is None: " + str(version == None))
     t = (
         session.query(distinct(StackLine.request_id).label('id'))
         .filter(Request.endpoint_id == endpoint_id)
+        .filter((version == None) or (Request.version_requested == version))
         .join(Request.stack_lines)
         .order_by(StackLine.request_id.desc())
         .limit(100)

@@ -18,16 +18,23 @@
             </div>
         <table class="table table-bordered table-hover" width="100%" style="margin: 0;" cellspacing="0">
             <thead>
-                        <tr>
+            <tr>
                 <th rowspan="2">Code-line</th>
                 <th colspan="2" style="text-align: center; width: 16%;">Hits</th>
-                <th rowspan="2" style="width: 8%;">Average time</th>
+                <th colspan="3" style="width: 18%;">Average time</th>
                 <th rowspan="2" style="width: 8%;">Standard deviation</th>
                 <th colspan="2" style="text-align: center; width: 16%;">Total</th>
+                <th rowspan="2" style="text-align: center; width: 8%;">Changes</th>
+                <th rowspan="2" style="text-align: center; width: 8%;">Regression</th>
             </tr>
             <tr>
                 <th style="width: 8%;">Absolute</th>
                 <th style="width: 8%;">%</th>
+
+                <th style="width: 6%;">Before</th>
+                <th style="width: 6%;">After</th>
+                <th style="width: 6%;">Change</th>
+
                 <th style="width: 8%;">Absolute</th>
                 <th style="width: 8%;">%</th>
             </tr>
@@ -40,15 +47,28 @@
                        ng-class="{'fa-minus-square': row.min, 'fa-plus-square': !row.min}"
                        ng-click="toggleRows(row)" ng-show="row.body.length > 0"></i>
                 </td>
+
                 <td style="text-align: right;">{{ row.hits }}</td>
                 <td style="text-align: right; background-color: {{ computeColor(row.hits / table[0].hits) }}">
                     {{ row.hits / table[0].hits * 100 | number: 1 }}%</td>
-                <td>{{ row.duration / row.hits | duration }}</td>
+
+                <td>{{ row.previous_avg_duration | duration }}</td>
+                <td>{{ row.avg_duration | duration }}</td>
+                <td style="text-align: right; background-color: {{ computeColor(row.duration_change) }};">
+                    {{ (row.duration_change * 100) | number: 1 }}%</td>
+
                 <td>{{ row.std | duration }}</td>
+
                 <td style="text-align: right;">{{ row.duration | duration }}</td>
 
                 <td style="text-align: right; background-color: {{ computeColor(row.duration / table[0].duration) }};">
                     {{ (row.duration / table[0].duration * 100) | number: 1 }}%</td>
+
+                <td style="background-color: {{ row.was_changed ? '#e74a35' : '#fff' }};">
+                    {{ row.was_changed }}</td>
+
+                <td style="background-color: {{ row.regression ? '#f106f1' : '#fff' }};">
+                    {{ row.regression }}</td>
             </tr>
             </tbody>
         </table>

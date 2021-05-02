@@ -1,6 +1,6 @@
 from flask import jsonify
 
-from flask_monitoringdashboard.controllers.profiler import get_profiler_table, get_grouped_profiler
+from flask_monitoringdashboard.controllers.profiler import get_profiler_table, get_grouped_profiler, get_lines_changed_since_version
 from flask_monitoringdashboard.database import session_scope, Endpoint
 
 from flask_monitoringdashboard.core.auth import secure
@@ -27,4 +27,7 @@ def profiler_table(endpoint_id, offset, per_page):
 @secure
 def grouped_profiler(endpoint_id):
     with session_scope() as session:
-        return jsonify(get_grouped_profiler(session, endpoint_id))
+        changed_functions = get_lines_changed_since_version('9b0948', '9c72e0')
+        previous_version = get_grouped_profiler(session, endpoint_id, '9b0948')
+        new_version = jsonify(get_grouped_profiler(session, endpoint_id, '9c72e0', previous_version, changed_functions))
+        return new_version

@@ -1,6 +1,8 @@
 import datetime
+import os
 
 from numpy import median
+from numpy import std
 from sqlalchemy import and_
 
 from flask_monitoringdashboard import config
@@ -98,6 +100,35 @@ def get_endpoint_users(session, endpoint_id, users):
     ]
 
 
+def get_endpoints_changed_since_version(version_1, version_2):
+    """
+    :param version_1: version/commit id
+    :param version_2: version/commit id
+    :return: a list of endpoints changed since the version
+    """
+    command = """
+        git show {commit_1}^..{commit_2} |
+        grep -E '^(@@)'          |
+        grep -v 'import '        |
+        sed 's/@@.*@@//'         |
+        sed 's/([^)]*)//g'       |
+        sed 's/def //'           |
+        sed 's/ //'              |
+        sed 's/://'              |
+        sed '/^$/d'              |
+        sort                     |
+        uniq """
+    command_output = os.popen(
+        command.format(
+            commit_1=version_1,
+            commit_2=version_2
+            )
+        ).read()
+    endpoints_list = command_output.splitlines()
+    print(endpoints_list)
+    return endpoints_list
+
+
 def get_endpoint_versions(session, endpoint_id, versions):
     """
     :param session: session for the database
@@ -109,15 +140,22 @@ def get_endpoint_versions(session, endpoint_id, versions):
         session, lambda x: simplify(x, 100), Request.endpoint_id == endpoint_id
     )
     first_requests = get_first_requests(session, endpoint_id)
-    return [
+    most_recent_version = versions[0]
+
+    versions_data = [
         {
             'version': v,
             'date': get_value(first_requests, v),
             'values': get_value(times, v),
+            'median': median(get_value(times, v)),
+            'standard_deviation': std(get_value(times, v)),
+            'changed_endpoints': get_endpoints_changed_since_version(v, most_recent_version),
             'color': get_color(v),
         }
         for v in versions
     ]
+
+    return versions_data
 
 
 def get_api_performance(session, endpoints):

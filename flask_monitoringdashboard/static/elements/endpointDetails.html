@@ -37,6 +37,28 @@
                     <td><b>Total number of hits</b></td>
                     <td>{{ endpoint.info.total_hits | number }}</td>
                 </tr>
+
+                <tr ng-show="endpoint.info.regression">
+                    <td><b>Performance regression</b></td>
+                    <td>{{ endpoint.info.regression }}</td>
+                </tr>
+                <tr ng-show="endpoint.info.code_change_version">
+                    <td><b>Last code change</b></td>
+                    <td>{{ endpoint.info.code_change_version }} ({{ endpoint.info.code_change_versions_ago | number }} versions ago)
+                    </td>
+                </tr>
+                <tr ng-show="endpoint.info.endpoints_changed">
+                    <td><b>Endpoints changed</b></td>
+                    <td>{{ endpoint.info.endpoints_changed }}</td>
+                </tr>
+                <tr ng-show="endpoint.info.execution_time_change">
+                    <td><b>Execution time change</b></td>
+                    <td>{{ endpoint.info.execution_time_change | number }}ms</td>
+                </tr>
+                <tr ng-show="endpoint.info.standard_deviation">
+                    <td><b>Standard deviation</b></td>
+                    <td>{{ endpoint.info.standard_deviation | number }}ms</td>
+                </tr>
             </table>
         </div>
     </div>

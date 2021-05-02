@@ -4,4 +4,5 @@ export default function () {
         'as a PNG image.';
     this.axesText = '';
     this.contentText = '';
+    this.regressionText = '';
 }
