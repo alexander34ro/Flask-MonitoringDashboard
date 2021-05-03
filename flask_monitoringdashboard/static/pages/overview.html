@@ -59,6 +59,7 @@
                         <tr>
                             <th></th>
                             <th>Endpoint</th>
+                            <th>Regression</th>
                             <th ng-show="isHits">Today</th>
                             <th ng-show="isHits">Last 7 days</th>
                             <th ng-show="isHits">Overall</th>
@@ -77,6 +78,7 @@
 
                             <td style="background-color: {{ row.color }}"></td>
                             <td style="max-width: 200px;">{{ row.name }}</td>
+                            <td style="max-width: 100px;">{{ row.name == 'Main' ? 'Yes' : 'No' }}</td>
 
 
                             <td class="table_cell_with_error_count"
